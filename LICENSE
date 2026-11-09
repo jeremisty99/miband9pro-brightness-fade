@@ -1,0 +1,41 @@
+MIT License
+
+Copyright (c) 2026 Wang Jiayi (jeremisty99)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------
+
+SCOPE NOTE / 适用范围说明
+
+本许可证仅覆盖本仓库中原创的：
+
+  - Markdown 文档（README.md、SKILL.md、references/*.md）
+  - SVG 图解（assets/diagrams/*.svg）
+  - Python 工具（scripts/*.py）
+
+本仓库为讲解目的引用了第三方 Lua 脚本的少量片段，其版权归原作者所有：
+
+  - NineBomb/SmoothlyLight-9      AGPL-3.0   https://github.com/NineBomb/SmoothlyLight-9
+  - NineBomb/EXMars              AGPL-3.0   https://github.com/NineBomb/EXMars
+  - LeeKLong/Lua_MiBand9Pro      AGPL-3.0   https://github.com/LeeKLong/Lua_MiBand9Pro
+
+基于上述 AGPL-3.0 作品修改得到的 Lua 文件属于衍生作品，必须继续遵循
+AGPL-3.0，不得改用本 MIT 许可证。本仓库不分发完整的 Lua 脚本文件。
+完整出处与合规说明见 references/05-sources.md。

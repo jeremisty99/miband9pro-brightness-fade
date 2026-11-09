@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 346" width="680" height="346" role="img">
+<title>点击失效与组合修复的层序对比</title>
+<desc>修复前全屏 Lua 容器位于最顶层，透明但可点击，吞掉所有触摸事件；修复后把透明跳转热区移到 Lua 容器之上，同时在 Lua 侧关闭遮罩的 CLICKABLE 并开启 EVENT_BUBBLE，点击恢复。</desc>
+<style>
+.th{font:500 14px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#2C2C2A}
+.ts{font:400 12px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#5F5E5A}
+.tb{font:500 13px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#2C2C2A}
+.tn{font:500 11px ui-monospace,Consolas,"Courier New",monospace;fill:#5F5E5A}
+.red{font:500 13px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#B03A3A}
+.grn{font:500 13px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#1E7A46}
+</style>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<rect x="0" y="0" width="680" height="346" fill="#FFFFFF"/>
+<text class="th" x="32" y="26">透明 ≠ 不挡点击：全屏容器会先吃掉触摸事件</text>
+
+<!-- 左：修复前 -->
+<rect x="32" y="44" width="292" height="248" rx="14" fill="#FBEFEF" stroke="#E3BDBD" stroke-width="1"/>
+<text class="red" x="48" y="68">修复前 · 跳转全部失效</text>
+<text class="tn" x="48" y="86">z-order 从上到下 ↓</text>
+
+<rect x="52" y="98" width="252" height="46" rx="8" fill="#FFFFFF" stroke="#B03A3A" stroke-width="1.5"/>
+<text class="tb" x="66" y="118">① Lua 全屏容器（Shape=34）</text>
+<text class="tn" x="66" y="136">CLICKABLE = on  → 吞掉事件 ✗</text>
+
+<rect x="52" y="150" width="252" height="46" rx="8" fill="#FFFFFF" stroke="#D3D1C7" stroke-width="1"/>
+<text class="tb" x="66" y="170">② btn_* 透明跳转热区</text>
+<text class="tn" x="66" y="188">收不到事件，永远不触发</text>
+
+<rect x="52" y="202" width="252" height="46" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+<text class="tb" x="66" y="222">③ 资源层：图片 / 数字 / 内容</text>
+<text class="tn" x="66" y="240">正常渲染，被黑遮罩盖住</text>
+
+<text class="ts" x="52" y="272">手指点下去 → 命中最上层容器 → 事件终止</text>
+
+<!-- 右：修复后 -->
+<rect x="356" y="44" width="292" height="248" rx="14" fill="#EDF7F0" stroke="#A8CFB7" stroke-width="1"/>
+<text class="grn" x="372" y="68">修复后 · B_组合（真机验证）</text>
+<text class="tn" x="372" y="86">z-order 从上到下 ↓</text>
+
+<rect x="376" y="98" width="252" height="46" rx="8" fill="#FFFFFF" stroke="#1E7A46" stroke-width="1.5"/>
+<text class="tb" x="390" y="118">① btn_* 透明跳转热区（上移）</text>
+<text class="tn" x="390" y="136">PNG 全透明，不影响任何像素 ✓</text>
+
+<rect x="376" y="150" width="252" height="46" rx="8" fill="#FFFFFF" stroke="#D3D1C7" stroke-width="1"/>
+<text class="tb" x="390" y="170">② Lua 遮罩（放行事件）</text>
+<text class="tn" x="390" y="188">clear_flag(CLICKABLE) + EVENT_BUBBLE</text>
+
+<rect x="376" y="202" width="252" height="46" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+<text class="tb" x="390" y="222">③ 资源层：图片 / 数字 / 内容</text>
+<text class="tn" x="390" y="240">park_veil() 结束后遮罩退场</text>
+
+<text class="ts" x="376" y="272">手指点下去 → 命中热区 → 跳转正常</text>
+
+<path d="M330 168 L350 168" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="32" y="302" width="616" height="32" rx="8" fill="#F1EFE8"/>
+<text class="ts" x="44" y="322">两边必须同时做：只改 Lua（放行）或只改工程层（热区上移）都不够；热区行级搬移，不重序列化 XML。</text>
+</svg>

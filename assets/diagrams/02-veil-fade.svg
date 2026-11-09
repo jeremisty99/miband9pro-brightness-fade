@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 306" width="680" height="306" role="img">
+<title>黑遮罩逐帧变透明</title>
+<desc>屏幕背光始终恒定，Lua 只是在画面上盖一层全屏黑矩形，把 bg_opa 从 97 逐帧降到 0，视觉上就像屏幕慢慢亮起来。</desc>
+<style>
+.th{font:500 14px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#2C2C2A}
+.ts{font:400 12px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#5F5E5A}
+.tn{font:500 12px ui-monospace,Consolas,"Courier New",monospace;fill:#185FA5}
+.tg{font:500 12px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#1E7A46}
+</style>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<rect x="0" y="0" width="680" height="306" fill="#FFFFFF"/>
+<text class="th" x="32" y="28">所谓「渐亮」：屏幕背光没变，是黑布越来越透</text>
+<text class="ts" x="32" y="48">下层的表盘内容从一开始就是全亮的；变化的只有盖在上面那层黑色矩形的 bg_opa。</text>
+
+<!-- 帧 1 -->
+<g>
+<rect x="32" y="66" width="108" height="152" rx="16" fill="#EDEBE3" stroke="#D3D1C7" stroke-width="1"/>
+<text x="86" y="112" text-anchor="middle" class="th" font-size="22">10:08</text>
+<text x="86" y="140" text-anchor="middle" class="ts">8,432 步</text>
+<text x="86" y="164" text-anchor="middle" class="ts">26°C 晴</text>
+<text x="86" y="192" text-anchor="middle" class="ts">电量 86%</text>
+<rect x="32" y="66" width="108" height="152" rx="16" fill="#000000" fill-opacity="0.380"/>
+<text class="tn" x="86" y="238" text-anchor="middle">bg_opa 97</text>
+<text class="ts" x="86" y="256" text-anchor="middle">第 1 帧</text>
+</g>
+<!-- 帧 2 -->
+<g>
+<rect x="164" y="66" width="108" height="152" rx="16" fill="#EDEBE3" stroke="#D3D1C7" stroke-width="1"/>
+<text x="218" y="112" text-anchor="middle" class="th" font-size="22">10:08</text>
+<text x="218" y="140" text-anchor="middle" class="ts">8,432 步</text>
+<text x="218" y="164" text-anchor="middle" class="ts">26°C 晴</text>
+<text x="218" y="192" text-anchor="middle" class="ts">电量 86%</text>
+<rect x="164" y="66" width="108" height="152" rx="16" fill="#000000" fill-opacity="0.286"/>
+<text class="tn" x="218" y="238" text-anchor="middle">bg_opa 73</text>
+<text class="ts" x="218" y="256" text-anchor="middle">第 7 帧</text>
+</g>
+<!-- 帧 3 -->
+<g>
+<rect x="296" y="66" width="108" height="152" rx="16" fill="#EDEBE3" stroke="#D3D1C7" stroke-width="1"/>
+<text x="350" y="112" text-anchor="middle" class="th" font-size="22">10:08</text>
+<text x="350" y="140" text-anchor="middle" class="ts">8,432 步</text>
+<text x="350" y="164" text-anchor="middle" class="ts">26°C 晴</text>
+<text x="350" y="192" text-anchor="middle" class="ts">电量 86%</text>
+<rect x="296" y="66" width="108" height="152" rx="16" fill="#000000" fill-opacity="0.192"/>
+<text class="tn" x="350" y="238" text-anchor="middle">bg_opa 49</text>
+<text class="ts" x="350" y="256" text-anchor="middle">第 13 帧</text>
+</g>
+<!-- 帧 4 -->
+<g>
+<rect x="428" y="66" width="108" height="152" rx="16" fill="#EDEBE3" stroke="#D3D1C7" stroke-width="1"/>
+<text x="482" y="112" text-anchor="middle" class="th" font-size="22">10:08</text>
+<text x="482" y="140" text-anchor="middle" class="ts">8,432 步</text>
+<text x="482" y="164" text-anchor="middle" class="ts">26°C 晴</text>
+<text x="482" y="192" text-anchor="middle" class="ts">电量 86%</text>
+<rect x="428" y="66" width="108" height="152" rx="16" fill="#000000" fill-opacity="0.098"/>
+<text class="tn" x="482" y="238" text-anchor="middle">bg_opa 25</text>
+<text class="ts" x="482" y="256" text-anchor="middle">第 19 帧</text>
+</g>
+<!-- 帧 5 -->
+<g>
+<rect x="560" y="66" width="108" height="152" rx="16" fill="#EDEBE3" stroke="#1E7A46" stroke-width="1.5"/>
+<text x="614" y="112" text-anchor="middle" class="th" font-size="22">10:08</text>
+<text x="614" y="140" text-anchor="middle" class="ts">8,432 步</text>
+<text x="614" y="164" text-anchor="middle" class="ts">26°C 晴</text>
+<text x="614" y="192" text-anchor="middle" class="ts">电量 86%</text>
+<text class="tg" x="614" y="238" text-anchor="middle">bg_opa 0</text>
+<text class="ts" x="614" y="256" text-anchor="middle">第 25 帧 · park</text>
+</g>
+
+<path d="M144 142 L160 142" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M276 142 L292 142" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M408 142 L424 142" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M540 142 L556 142" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="32" y="270" width="636" height="26" rx="8" fill="#F1EFE8"/>
+<text class="ts" x="44" y="287">Timer 每 17 ms 回调一次，步长 4/255，共约 25 帧 ≈ 425 ms；结束后把遮罩移出屏幕缩成 1×1，避免继续挡点击。</text>
+</svg>

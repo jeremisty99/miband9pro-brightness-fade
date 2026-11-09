@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 310" width="680" height="310" role="img">
+<title>抬腕点亮的完整时序</title>
+<desc>点亮过程前两帧由引擎绘制 AOD 主题，Lua 完全管不到；Lua 遮罩只从主表盘首帧开始生效，因此必须让 AOD 帧与主表盘首帧亮度对齐。</desc>
+<style>
+.th{font:500 14px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#2C2C2A}
+.ts{font:400 12px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#5F5E5A}
+.tb{font:500 12px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#2C2C2A}
+.tn{font:400 11px ui-monospace,Consolas,"Courier New",monospace;fill:#5F5E5A}
+</style>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<rect x="0" y="0" width="680" height="310" fill="#FFFFFF"/>
+<text class="th" x="32" y="26">抬腕点亮时，谁在什么时候画了什么</text>
+
+<!-- 区间标注 -->
+<path d="M32 66 L32 58 L270 58 L270 66" fill="none" stroke="#C08A3E" stroke-width="1.5"/>
+<text class="ts" x="151" y="52" text-anchor="middle" fill="#A6722C">引擎绘制 · Lua 完全管不到</text>
+<path d="M284 66 L284 58 L648 58 L648 66" fill="none" stroke="#2E7FB8" stroke-width="1.5"/>
+<text class="ts" x="466" y="52" text-anchor="middle" fill="#185FA5">Lua 遮罩生效区间</text>
+
+<!-- 阶段 1 -->
+<rect x="32" y="78" width="112" height="104" rx="10" fill="#FBF3E6" stroke="#E0C79C" stroke-width="1"/>
+<text class="tn" x="42" y="96">① AOD 常显</text>
+<text class="tb" x="42" y="118">引擎画 AOD</text>
+<text class="ts" x="42" y="136">主题的最后一帧</text>
+<text class="tn" x="42" y="160">Lua 未运行</text>
+
+<!-- 阶段 2 -->
+<rect x="158" y="78" width="112" height="104" rx="10" fill="#FBF3E6" stroke="#E0C79C" stroke-width="1"/>
+<text class="tn" x="168" y="96">② 抬腕触发</text>
+<text class="tb" x="168" y="118">正常背光重绘</text>
+<text class="ts" x="168" y="136">AOD 帧（最亮）</text>
+<text class="tn" x="168" y="160">亮度 93 / 150</text>
+
+<!-- 阶段 3 -->
+<rect x="284" y="78" width="112" height="104" rx="10" fill="#EDF3FA" stroke="#A9C6E2" stroke-width="1"/>
+<text class="tn" x="294" y="96">③ 切换主表盘</text>
+<text class="tb" x="294" y="118">Lua 首帧摆好</text>
+<text class="ts" x="294" y="136">黑遮罩 opa=97</text>
+<text class="tn" x="294" y="160">亮度 ≈ 98</text>
+
+<!-- 阶段 4 -->
+<rect x="410" y="78" width="112" height="104" rx="10" fill="#EDF3FA" stroke="#A9C6E2" stroke-width="1"/>
+<text class="tn" x="420" y="96">④ Timer 推进</text>
+<text class="tb" x="420" y="118">每 17 ms 减 4</text>
+<text class="ts" x="420" y="136">黑布越来越透</text>
+<text class="tn" x="420" y="160">单调上升</text>
+
+<!-- 阶段 5 -->
+<rect x="536" y="78" width="112" height="104" rx="10" fill="#EDF7F0" stroke="#A8CFB7" stroke-width="1"/>
+<text class="tn" x="546" y="96">⑤ 完全点亮</text>
+<text class="tb" x="546" y="118">opa 归 0</text>
+<text class="ts" x="546" y="136">park_veil 退场</text>
+<text class="tn" x="546" y="160">跳转热区生效</text>
+
+<path d="M146 130 L156 130" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M272 130 L282 130" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M398 130 L408 130" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M524 130 L534 130" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="32" y="200" width="616" height="46" rx="8" fill="#FBEFEF" stroke="#E3BDBD" stroke-width="0.5"/>
+<text class="ts" x="44" y="219">结构性问题：②③ 之间跨了两套主题。Lua 遮罩盖不住 ② 引擎画的 AOD 帧，而黑布只能变暗、不能提亮。</text>
+<text class="ts" x="44" y="237">所以只要 AOD 素材比主表盘首帧亮，亮度序列必然是「亮 → 暗 → 渐亮」；调任何 Lua 渐变参数都消不掉。</text>
+
+<rect x="32" y="256" width="616" height="42" rx="8" fill="#EDF7F0" stroke="#A8CFB7" stroke-width="0.5"/>
+<text class="ts" x="44" y="275">解法在工程层：把 AOD 主题 165 张素材的 RGB 整体 ×0.62（尺寸与 alpha 不变），让 ② 与 ③ 亮度相等。</text>
+<text class="ts" x="44" y="291">改动 AOD 素材后必须 AOD + 主表盘两个主题都重新编译，否则压暗不会进入 .face 运行时产物。</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 342" width="680" height="342" role="img">
+<title>亮度跳变消失原理：AOD 帧与首帧对齐</title>
+<desc>抬腕点亮时引擎先重绘 AOD 帧再切主表盘。AOD 素材原始亮度配合 START_OPA=150 会产生 150 到 65 的亮度下凹；把 AOD 素材压暗 0.62 并令 START_OPA=97 后，两帧亮度变成 93 到 98，曲线单调上升。</desc>
+<style>
+.th{font:500 14px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#2C2C2A}
+.ts{font:400 12px system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;fill:#5F5E5A}
+.tn{font:500 11px ui-monospace,Consolas,"Courier New",monospace;fill:#5F5E5A}
+</style>
+<rect x="0" y="0" width="680" height="342" fill="#FFFFFF"/>
+<text class="th" x="32" y="26">不是渐变更丝滑，是起点终于和上一帧接上了</text>
+<text class="ts" x="32" y="46">纵轴：屏幕数字像素亮度（0–255）。四个时刻：AOD 点亮帧 → 主表盘首帧 → 渐变中 → 完全点亮。</text>
+
+<!-- 网格 -->
+<g stroke="#DCDAD2" stroke-width="1">
+<line x1="100" y1="62" x2="632" y2="62"/>
+<line x1="100" y1="108" x2="632" y2="108"/>
+<line x1="100" y1="156" x2="632" y2="156"/>
+<line x1="100" y1="203" x2="632" y2="203"/>
+<line x1="100" y1="250" x2="632" y2="250"/>
+</g>
+<g class="tn" text-anchor="end">
+<text x="92" y="66">255</text><text x="92" y="112">192</text><text x="92" y="160">128</text>
+<text x="92" y="207">64</text><text x="92" y="254">0</text>
+</g>
+<line x1="100" y1="250" x2="632" y2="250" stroke="#888780" stroke-width="1"/>
+<line x1="100" y1="62" x2="100" y2="250" stroke="#888780" stroke-width="1"/>
+
+<!-- X 轴标签 -->
+<g class="ts" text-anchor="middle">
+<text x="150" y="270">AOD 点亮帧</text>
+<text x="300" y="270">主表盘首帧</text>
+<text x="460" y="270">渐变中</text>
+<text x="600" y="270">完全点亮</text>
+</g>
+
+<!-- 红线：AOD 原始 + START_OPA=150 -->
+<polyline points="150,139 300,202 460,169 600,133" fill="none" stroke="#C85050" stroke-width="2.5" stroke-linejoin="round"/>
+<g fill="#C85050">
+<circle cx="150" cy="139" r="4"/><circle cx="300" cy="202" r="4"/>
+<circle cx="460" cy="169" r="4"/><circle cx="600" cy="133" r="4"/>
+</g>
+<text class="tn" x="158" y="132" fill="#C85050">150</text>
+<text class="tn" x="308" y="218" fill="#C85050">65</text>
+
+<!-- 落差标注 -->
+<line x1="278" y1="139" x2="278" y2="202" stroke="#C85050" stroke-width="1" stroke-dasharray="3 3"/>
+<text class="tn" x="272" y="176" text-anchor="end" fill="#C85050">落差 85/255</text>
+
+<!-- 绿线：AOD ×0.62 + START_OPA=97 -->
+<polyline points="150,181 300,178 460,154 600,133" fill="none" stroke="#2E9E63" stroke-width="2.5" stroke-linejoin="round"/>
+<g fill="#2E9E63">
+<circle cx="150" cy="181" r="4"/><circle cx="300" cy="178" r="4"/>
+<circle cx="460" cy="154" r="4"/><circle cx="600" cy="133" r="4"/>
+</g>
+<text class="tn" x="158" y="196" fill="#2E9E63">93</text>
+<text class="tn" x="308" y="171" fill="#2E9E63">98</text>
+
+<!-- 图例 -->
+<rect x="392" y="70" width="230" height="52" rx="8" fill="#F7F6F2" stroke="#D3D1C7" stroke-width="0.5"/>
+<line x1="404" y1="88" x2="430" y2="88" stroke="#C85050" stroke-width="2.5"/>
+<text class="ts" x="438" y="92">对齐前：AOD 全亮 + opa150</text>
+<line x1="404" y1="108" x2="430" y2="108" stroke="#2E9E63" stroke-width="2.5"/>
+<text class="ts" x="438" y="112">对齐后：AOD ×0.62 + opa97</text>
+
+<rect x="32" y="284" width="616" height="46" rx="8" fill="#F1EFE8"/>
+<text class="ts" x="44" y="303">START_OPA = 255 × (1 − AOD 压暗系数)：97 ↔ 0.62，两者必须联动，且 AOD 与主表盘两个主题都要重新编译。</text>
+<text class="ts" x="44" y="321">v6.1 再补两刀：MIN_OPA 6→1 消掉收尾 7→0 的跳变；FRAMES 24→32 把中间台阶从 5/255 降到 4/255。</text>
+</svg>
