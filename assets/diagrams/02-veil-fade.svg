@@ -77,5 +77,5 @@
 <path d="M540 142 L556 142" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
 
 <rect x="32" y="270" width="636" height="26" rx="8" fill="#F1EFE8"/>
-<text class="ts" x="44" y="287">Timer 每 17 ms 回调一次，步长 4/255，共约 25 帧 ≈ 425 ms；结束后把遮罩移出屏幕缩成 1×1，避免继续挡点击。</text>
+<text class="ts" x="44" y="287">Timer 每 16 ms 回调一次，步长 5/255，共约 20 帧 ≈ 320 ms；结束后把遮罩移出屏幕缩成 1×1，避免继续挡点击。</text>
 </svg>

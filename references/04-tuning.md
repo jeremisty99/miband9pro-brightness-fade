@@ -29,8 +29,8 @@ python scripts/dim_aod_assets.py <工程> --factor 0.62 --sync
 
 | 参数 | 当前 | 调大 | 调小 |
 | --- | --- | --- | --- |
-| `FRAMES` | 32 | 台阶更小、更柔，但更慢 | 台阶更大、更快，可能看出阶梯 |
-| `PERIOD` | 17 ms | 每帧更容易被手环刷新跟上，但整体变慢 | 更快，但可能掉帧 |
+| `FRAMES` | 24 | 台阶更小、更柔，但更慢 | 台阶更大、更快，可能看出阶梯 |
+| `PERIOD` | 16 ms | 每帧更容易被手环刷新跟上，但整体变慢 | 更快，但可能掉帧 |
 | `MIN_OPA` | 1 | 收尾跳变变大 | 无意义（已是最小） |
 
 `step = ceil(START_OPA / FRAMES)`，实际帧数由 step 决定，不一定等于 `FRAMES`：
@@ -38,11 +38,12 @@ python scripts/dim_aod_assets.py <工程> --factor 0.62 --sync
 | `FRAMES` | `step` | 可见帧 | 时长 | 末帧跳变 | 评价 |
 | --- | --- | --- | --- | --- | --- |
 | 24（v6 原值） | 5 | 19 | 323 ms | `7→0`，2.7% | 收尾有一下「突然亮」 |
-| **32（v6.1）** | **4** | **25** | **425 ms** | `1→0`，0.4% | **当前值，推荐** |
+| 32（v6.1） | 4 | 25 | 425 ms | `1→0`，0.4% | 最平滑档位，偏慢 |
+| **24 / 16（v6.2）** | **5** | **20** | **320 ms** | `1→0`，0.4% | **当前值** |
 | 48 | 3 | 33 | 561 ms | `1→0` | 更柔但偏慢 |
 | 97 | 1 | 97 | 1649 ms | 0 | 极致细腻，通常太拖 |
 
-回退到「当前好用状态」：`FRAMES=24`、`MIN_OPA=6`。
+回退到最平滑 v6.1：`FRAMES=32`、`PERIOD=17`、`MIN_OPA=1`；回退到 v6 原效果：`FRAMES=24`、`PERIOD=17`、`MIN_OPA=6`。
 
 ## 3. 症状 → 原因 → 处理
 
@@ -53,7 +54,8 @@ python scripts/dim_aod_assets.py <工程> --factor 0.62 --sync
 | **点亮先闪一帧黑** | 首帧遮罩还没就位（`bg_opa` 要等 Timer 第一次回调才设） | 先 `scr:set` 再 `clear_flag(HIDDEN)`；Timer 创建后立即 `pause()` |
 | **先闪一下最亮、再变暗渐显** | AOD 帧比主表盘首帧亮（结构性下凹） | 压暗 AOD 素材并配对 `START_OPA`，**两个主题都重新编译** |
 | **只有收尾「突然亮一下」** | `MIN_OPA=6` 导致末帧 `7→0` | `MIN_OPA=1` |
-| **能看出一阶一阶的台阶** | `step` 太大 | `FRAMES=48`（step=3）；必要时把 step 改成浮点并在 `set` 时取整 |
+| **能看出一阶一阶的台阶** | `step` 太大 | `FRAMES=32`（step=4）或 `FRAMES=48`（step=3）；必要时把 step 改成浮点并在 `set` 时取整 |
+| **动画偏慢** | 425ms 的长渐变 | `FRAMES 32→24` + `PERIOD 17→16`（320ms）；还想快可 `PERIOD=15`，但不要低于 15 |
 | **改了 Lua 但真机没变化** | 用了旧 `output/*.face`；或 GUI 内存里的旧工程回写覆盖 | 关闭并重新打开 `.fprj` 再编译；推送前核对产物时间戳 |
 | **压暗 AOD 后观感没改善** | AOD 主题没重新编译，压暗没进运行时 | 重编译 AOD + 主表盘两个主题 |
 | **叠加 Lua 后所有跳转失效** | 全屏遮罩吃掉了触摸事件 | 组合修复：Lua 侧 `CLICKABLE`/`EVENT_BUBBLE`/`park_veil()` + 工程侧热区排到 Lua 容器之上 |
@@ -67,7 +69,7 @@ python scripts/dim_aod_assets.py <工程> --factor 0.62 --sync
 
 1. **判断改动范围**
    - 只改 Lua → 只需重编译主表盘；
-   - 改了 AOD 素材或 `AOD.fprj` → **两个主题都要重编译**。
+   - 改了 AOD 素材或 `AOD.fprj`（含数字控件的 `Blanking` / `Alignment` / `Width`） → **两个主题都要重编译**。
 2. **关闭并重新打开 `.fprj`**，别用 GUI 的旧会话（否则内存中的旧内容会回写覆盖磁盘修复）。
 3. **编译后核对产物**：在 `.face` 里搜 `ScreenStateChangedCB` / `START_OPA` 确认打包的是新脚本；量一下 `AOD/images` 里白色数字帧峰值（158 = 已压暗，255 = 原始）。
 4. **只用本次新生成的 `.face`** 推送，旧 `output/` 里的产物全部作废。
@@ -98,7 +100,7 @@ python scripts/verify_project.py <工程> --source <原始素材目录>
 
 ## 6. 尚未实施、但可行的进一步优化
 
-这两项能再平滑一档，但会动 Timer 逻辑，建议先保留 v6.1 作为一键回退：
+这两项能再平滑一档，但会动 Timer 逻辑，建议先保留 v6.2 当前值、v6.1 作为一键回退：
 
 - 把 `step` 从整数改成浮点 `START_OPA / FRAMES`，在 `scr:set` 时取整 → 彻底消除量化台阶、精确用满帧数。
 - 用 `lvgl.Anim` 的 `ease_out` 路径（参考 `LeeKLong/Lua_MiBand9Pro`），让衰减先快后慢，比线性更接近自然亮屏。

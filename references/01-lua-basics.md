@@ -56,12 +56,12 @@ end
 
 ```lua
 orderedTimer = lvgl.Timer({
-    period = 17,              -- 每 17ms 回调一次
+    period = 16,              -- 每 16ms 回调一次
     cb = function(t) ... end
 })
 ```
 
-手环没有「播放动画」这种高级接口，动画就是定时器每 17ms 改一次属性，靠人眼视觉暂留连成动画。`orderedTimer:pause()` / `:resume()` 控制启停。
+手环没有「播放动画」这种高级接口，动画就是定时器每 16ms 改一次属性，靠人眼视觉暂留连成动画。`orderedTimer:pause()` / `:resume()` 控制启停。
 
 社区里也有用 `lvgl.Anim` 的写法（`LeeKLong/Lua_MiBand9Pro` 的 `fade-bright`），支持 `path = "ease_out"` 缓动曲线，但需要确认目标固件支持该模块。
 

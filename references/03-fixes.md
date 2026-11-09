@@ -14,7 +14,8 @@
 | v4 | 状态分流：AOD 点亮直接全亮 | ❌ **动画彻底没了** |
 | v5 | AOD 点亮改浅渐变 `START_LIT=55` | ❌ 渐显幅度小到看不见 |
 | v6 | 回滚到 v3 代码 + AOD ×0.62 | ✅ 动画与点击都恢复 |
-| v6.1 | `FRAMES 24→32`、`MIN_OPA 6→1` | ✅ 收尾跳变消失，过渡更平滑 |
+| v6.1 | `FRAMES 24→32`、`MIN_OPA 6→1` | ✅ 收尾跳变消失，过渡最平滑（425ms） |
+| v6.2 | `FRAMES 32→24`、`PERIOD 17→16` | ✅ 425ms→320ms，快约 25%，亮度衔接与收尾手感不变 |
 
 ## 修复一 · 让 Lua 图层和资源型控件共存
 
@@ -152,6 +153,7 @@ im = Image.merge("RGBA", (r.point(lut), g.point(lut), b.point(lut), a))
 
 - **v6**：代码逐字回到真机验证过「有渐显 + 5 个跳转正常」的 v3 逻辑，只重写注释头；删除 `arm_veil` / `last_state` / 状态分档，不用 `string.*`。AOD 素材恢复 ×0.62。两者必须成对。
 - **v6.1**：只改两个常量，逻辑零改动：`MIN_OPA 6→1` 消掉收尾 `7→0` 的 2.7% 跳变；`FRAMES 24→32` 把步长 5→4、19 帧→25 帧，台阶从 5/255 降到 4/255。
+- **v6.2**：425ms 偏慢，只把 `FRAMES 32→24`、`PERIOD 17→16`；`START_OPA=97`、`MIN_OPA=1`、AOD ×0.62 全部不动，因此亮度衔接与收尾手感不变。20 帧 / 320ms，台阶 4→5（2%），末帧仍是 `1→0`，没有重现 v6 的收尾突变暗。
 
 ## 工程层杂项修复
 
@@ -162,16 +164,18 @@ im = Image.merge("RGBA", (r.point(lut), g.point(lut), b.point(lut), a))
 | EasyFace 读不了工程 | 中文目录 / 中文文件名 | 工程目录改为纯 ASCII（如 `face`），对比图等中文名文件移出编译工程 |
 | `unable to open image '...\images\'` | `BitmapList` 末尾多一个 `\|`，生成空文件名，被拼成目录路径 | 按字节去掉空项即可（生成工程时用 `\|`.join 前先过滤空串） |
 | CLI 直调编译器报 `Array.Copy` 越界 | GUI 编译前会生成规范化的 `temp.fprj`，直接喂原始 fprj 走不通 | 用 GUI 编译；实测 GUI 可正常产出 `.face` |
-| 数字去零左对齐 | 天气 / 电量 / 步数需要动态位数、不补前导零 | 对应 `Shape=32` 控件设 `Blanking="1"` + `Alignment="0"`；后缀 `xxx_ref[数字控件Name]` 会自动紧跟数字实际结束位置 |
+| 数字去零左对齐 | 天气 / 电量 / 步数需要动态位数、不补前导零 | 对应 `Shape=32` 控件设 `Blanking="1"` + `Alignment="0"`；后缀 `xxx_ref[数字控件Name]` 会自动紧跟数字实际结束位置。**AOD 是独立 fprj**：只改主表盘不会同步 AOD，AOD 同名控件建议与亮屏同构（`Width` 用 5 位总框宽 110，而非单字符宽 22），改完两个主题都要重编译 |
 
 ## 最终稳定参数
+
+> 当前 v6.2；回退到最平滑组合：`FRAMES=32`、`PERIOD=17`、`MIN_OPA=1`。
 
 | 项 | 值 |
 | --- | --- |
 | `START_OPA` | `97` |
 | AOD 素材亮度系数 | `0.62`（`255 × (1−0.62) = 97`） |
-| `FRAMES` | `32` → `step=4`，25 帧 / 425ms |
-| `PERIOD` | `17` ms |
+| `FRAMES` | `24` → `step=5`，20 帧 / 320ms（最平滑档位 `32`：step=4 / 25 帧 / 425ms） |
+| `PERIOD` | `16` ms（≈60fps；v6.1 为 17） |
 | `MIN_OPA` | `1` |
 | fprj 层序 | 24 Widget；Lua 容器第 22 行，5 个 `btn_*` 热区全在其上 |
 | 点击修复 | `CLICKABLE` 关闭 / `EVENT_BUBBLE` 开启 / 结束 `park_veil()` |
